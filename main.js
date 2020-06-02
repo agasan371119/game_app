@@ -1,4 +1,4 @@
-const SCREEN_SIZE_W = 256;
+const SCREEN_SIZE_W = 244;
 const SCREEN_SIZE_H = 224;
 
 let can = document.getElementById("can");
