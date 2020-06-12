@@ -1,11 +1,10 @@
-const SCREEN_SIZE_W = 244;
-const SCREEN_SIZE_H = 224;
+//画面サイズ
+const SCREEN_W = 180;
+const SCREEN_H = 320;
 
-let can = document.getElementById("can");
-let con = an.getContext("2d");
+//キャンバスサイズ
+const CANVAN_W = SCREEN_W * 2;
+const CANVAN_H = SCREEN_H * 2;
 
-can.width = SCREEN_SIZE_W;
-can.height = SCREEN_SIZE_H;
-
-con.fillStyle = "#66AAFF";
-con.fillRect(0, 0, SCREEN_SIZE_W, SCREEN_SIZE_H);
+//キャンバスサイズ
+const 
