@@ -6,5 +6,7 @@ const SCREEN_H = 320;
 const CANVAN_W = SCREEN_W * 2;
 const CANVAN_H = SCREEN_H * 2;
 
-//キャンバスサイズ
-const 
+//フィールドサイズ
+const FIELD_W = SCREEN_W * 2;
+const FIELD_W = SCREEN_H * 2;
+
