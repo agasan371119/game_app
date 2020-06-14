@@ -10,3 +10,6 @@ const CANVAN_H = SCREEN_H * 2;
 const FIELD_W = SCREEN_W * 2;
 const FIELD_W = SCREEN_H * 2;
 
+//キャンバス
+let can = document.getElementById("can");
+let con = can.getContext("2d");
