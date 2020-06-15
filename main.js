@@ -13,3 +13,6 @@ const FIELD_W = SCREEN_H * 2;
 //キャンバス
 let can = document.getElementById("can");
 let con = can.getContext("2d");
+can.width = CANVAS_W;
+can.height = CANVAS_H;
+
