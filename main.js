@@ -36,6 +36,47 @@ let camera_y = 0;
 //星の実態
 let star = [];
 
+//ファイルを読み込み
+let spriteImage = new Image();
+spriteImage.src = "sprite.png";
+
+//スプライトクラス
+class Sprite {
+
+  constructor(x, y, w, h) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+  }
+}
+
+//スプライト
+let sprite =[
+  new Sprite(  0, 0, 22, 42),
+  new Sprite( 23, 0, 33, 42),
+  new Sprite( 57, 0, 43, 42),
+  new Sprite(101, 0, 33, 42),
+  new Sprite(135, 0, 21, 42),
+];
+
+//スプライトを描画する
+function drawSprite(snum, x, y) {
+  let sx = sprite[snum].x;
+  let sy = sprite[snum].y;
+  let sw = sprite[snum].w;
+  let sh = sprite[snum].h;
+
+  let px = (x >> 8) - sw/2;
+  let py = (y >> 8) - sh/2;
+
+  if(px + sw/2 < camera_x || px - sw/2 >= camera_x + SCREEN_W 
+    || py + sh/2 < camera_y || py - sh/2  >= camera_y + SCREEN_H)return;
+
+
+  vcon.drawImage(spriteImage, sx, sy, sw, sh, px, py, sw, sh);
+}
+
 //整数のランダムを作る
 function rand(min,max) {
   return Math.floor(Math.random() * (max-min+1)) + min;
@@ -89,10 +130,14 @@ function gameLoop() {
   //描画の処理
   vcon.fillStyle = "black";
   vcon.fillRect(0, 0, SCREEN_W, SCREEN_H);
+
   for(let i = 0; i < STAR_MAX; i++)star[i]. draw();
+
+  drawSprite(4, 100 << 8, 100 << 8);
 
   //仮想画面から実際のキャンバスにコピー
   con.drawImage(vcan, camera_x, camera_y, SCREEN_W,SCREEN_H, 0, 0, CANVAS_W, CANVAS_H);
+
 }
 
 //オンロードでゲーム開始
