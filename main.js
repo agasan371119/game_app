@@ -59,15 +59,30 @@ class Jiki {
     this.speed = 512;
     this.anime = 0;
   }
+  //自機の移動
   update() {
-    if ( key[37] )this.x -= this.speed; 
-    if ( key[38] )this.y -= this.speed; 
-    if ( key[39] )this.x += this.speed; 
-    if ( key[40] )this.y += this.speed; 
+    if (key[37] && this.x > this.speed) {
+
+      this.x -= this.speed;
+      if(this.anime >- 8)this.anime--;
+
+    } else if( key[39] && this.x <= (FIELD_W << 8)-this.speed) {
+
+      this.x += this.speed;
+      if(this.anime < 8)this.anime++;
+
+    } else {
+      if(this.anime > 0)this.anime--;
+      if(this.anime < 0)this.anime++;
+    }
+
+    if ( key[38] && this.y > this.speed )this.y -= this.speed; 
+    if ( key[40] && this.y <= (FIELD_H << 8)-this.speed)this.y += this.speed; 
 
   }
+  //描画
   draw() {
-    drawSprite(2 + this.anime, this.x, this.y);
+    drawSprite(2 + (this.anime >> 2), this.x, this.y);
   }
 }
 let jiki = new Jiki();
@@ -168,11 +183,16 @@ function gameLoop() {
 
   //描画の処理
   vcon.fillStyle = "black";
-  vcon.fillRect(0, 0, SCREEN_W, SCREEN_H);
+  vcon.fillRect(camera_x, camera_y, SCREEN_W, SCREEN_H);
 
   for(let i = 0; i < STAR_MAX; i++)star[i]. draw();
-
   jiki.draw();
+
+  //自機の範囲   0 ~ FIELD_W
+  //カメラの範囲 0 ~ (FIELD_W-SCREEN_W)
+
+  camera_x = (jiki.x >> 8)/FIELD_W * (FIELD_W-SCREEN_W);
+  camera_y = (jiki.y >> 8)/FIELD_H * (FIELD_H-SCREEN_H);
 
   //仮想画面から実際のキャンバスにコピー
   con.drawImage(vcan, camera_x, camera_y, SCREEN_W,SCREEN_H, 0, 0, CANVAS_W, CANVAS_H);
