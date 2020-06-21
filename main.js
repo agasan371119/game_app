@@ -1,3 +1,9 @@
+//デバッグのフラグ
+const DEBUG = true;
+
+let drawCount = 0;
+let fps = 0;
+let lastTime  = Date.now();
 
 //ゲームスピード(ms)
 const GAME_SPEED = 1000/60;
@@ -52,15 +58,21 @@ document.onkeyup = function(e) {
 //弾クラス
 class Tama {
   constructor (x, y, vx, vy) {
-    this.sn =  5;
-    this.x  =  x;
-    this.y  =  y;
-    this.vx = vx;
-    this.vy = vy;
+    this.sn   =  5;
+    this.x    =  x;
+    this.y    =  y;
+    this.vx   = vx;
+    this.vy   = vy;
+    this.kill = false;
   }
   update () {
     this.x += this.vx;
     this.y += this.vy;
+
+    if(this.x < 0 || this.x > FIELD_W << 8 || this.y < 0 
+      || this.y > FIELD_H << 8)this.kill = true; {
+
+    }
   }
   draw() {
     drawSprite(this.sn, this.x, this.y);
@@ -75,14 +87,30 @@ class Jiki {
   constructor() {
     this.x = (FIELD_W/2)<<8;
     this.y = (FIELD_H/2)<<8;
-    this.speed = 512;
-    this.anime = 0;
+    this.speed  = 512;
+    this.anime  = 0;
+    this.reload = 0;
+    this.relo2  = 0;
   }
   //自機の移動
   update() {
-    if (key[32]) {
-      tama.push(new Tama(this.x, this.y, 0, -2000));
+    if (key[32] && this.reload == 0) {
+      tama.push(new Tama(this.x+(4 << 8), this.y-(10 << 8),   0, -2000));
+      tama.push(new Tama(this.x-(4 << 8), this.y-(10 << 8),   0, -2000));
+      tama.push(new Tama(this.x+(8 << 8), this.y-(10 << 8),  80, -2000));
+      tama.push(new Tama(this.x-(8 << 8), this.y-(10 << 8), -80, -2000));
+
+      this.reload = 4;
+
+      if (++this.relo2 == 4) {
+        this.reload = 20;
+        this.relo2  =  0;
+      }
     }
+    if (!key[32] )this.reload = this.relo2 = 0;
+
+    if(this.reload > 0) this.reload--;
+
     if(key[37] && this.x > this.speed) {
 
       this.x -= this.speed;
@@ -204,7 +232,10 @@ function gameLoop() {
 
   //移動の処理
   for(let i = 0; i < STAR_MAX; i++)star[i]. update();
-  for(let i = 0; i < tama.length; i++)tama[i]. update();
+  for(let i = tama.length -1; i >= 0; i--) {
+    tama[i]. update();
+    if(tama[i].kill)tama.splice(i, 1);
+  }  
   jiki.update();
 
   //描画の処理
@@ -223,6 +254,21 @@ function gameLoop() {
 
   //仮想画面から実際のキャンバスにコピー
   con.drawImage(vcan, camera_x, camera_y, SCREEN_W,SCREEN_H, 0, 0, CANVAS_W, CANVAS_H);
+
+  if(DEBUG) {
+
+    drawCount++;
+    if(lastTime + 1000 <= Date.now()) {
+      fps = drawCount;
+      drawCount = 0;
+      lastTime = Date.now();
+    }
+
+    con.font = "20px 'Impact' ";
+    con.fillStyle = "white";
+    con.fillText("FPS:" +fps, 20, 20);
+    con.fillText("Tama:" +tama.length, 20, 40);
+  }
 
 }
 
