@@ -297,8 +297,8 @@ function drawSprite(snum, x, y) {
   let px = (x >> 8) - sw/2;
   let py = (y >> 8) - sh/2;
 
-  if(px + sw/2 < camera_x || px - sw/2 >= camera_x + SCREEN_W 
-    || py + sh/2 < camera_y || py - sh/2  >= camera_y + SCREEN_H)return;
+  if(px + sw < camera_x || px >= camera_x + SCREEN_W 
+    || py + sh < camera_y || py >= camera_y + SCREEN_H)return;
 
 
   vcon.drawImage(spriteImage, sx, sy, sw, sh, px, py, sw, sh);
@@ -349,31 +349,35 @@ function gameInit() {
   setInterval (gameLoop, GAME_SPEED);
 }
 
-//ゲームループ
-function gameLoop() {
-
-  //移動の処理
-  for(let i = 0; i < STAR_MAX; i++)star[i]. update();
-  for(let i = tama.length -1; i >= 0; i--) {
-    tama[i]. update();
-    if(tama[i].kill)tama.splice(i, 1);
-
+//オブジェクトをアップデート
+function updateObj(obj) {
+  for(let i = obj.length -1; i >= 0; i--) {
+    obj[i]. update();
+    if(obj[i].kill)obj.splice(i, 1);
   }
-  for(let i = teki.length -1; i >= 0; i--) {
-    teki[i]. update();
-    if(teki[i].kill)teki.splice(i, 1);
+}
 
-  }  
-  
+//オブジェクトを描画
+function drawObj(obj) {
+  for(let i = 0; i < obj.length; i++)obj[i]. draw();
+}
+
+//移動の処理
+function  updateAll() {
+  updateObj(star);
+  updateObj(tama);
+  updateObj(teki);
   jiki.update();
-
-  //描画の処理
+}
+//描画の処理
+function drawAll() {
+    
   vcon.fillStyle = "black";
   vcon.fillRect(camera_x, camera_y, SCREEN_W, SCREEN_H);
 
-  for(let i = 0; i < STAR_MAX; i++)star[i]. draw();
-  for(let i = 0; i < tama.length; i++)tama[i]. draw();
-  for(let i = 0; i < teki.length; i++)teki[i]. draw();
+  drawObj(star);
+  drawObj(tama);
+  drawObj(teki);
   jiki.draw();
 
   //自機の範囲   0 ~ FIELD_W
@@ -384,7 +388,11 @@ function gameLoop() {
 
   //仮想画面から実際のキャンバスにコピー
   con.drawImage(vcan, camera_x, camera_y, SCREEN_W,SCREEN_H, 0, 0, CANVAS_W, CANVAS_H);
+  
+}
 
+//情報の表示
+function putInfo() {
   if(DEBUG) {
 
     drawCount++;
@@ -400,7 +408,13 @@ function gameLoop() {
     con.fillText("Tama:" +tama.length, 20, 40);
     con.fillText("Teki:" +teki.length, 20, 60);
   }
+}
 
+//ゲームループ
+function gameLoop() {
+  updateAll();
+  drawAll();
+  putInfo();
 }
 
 //オンロードでゲーム開始
