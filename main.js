@@ -5,6 +5,9 @@ let drawCount = 0;
 let fps = 0;
 let lastTime  = Date.now();
 
+//スムージング
+const SMOOTHING = false;
+
 //ゲームスピード(ms)
 const GAME_SPEED = 1000/60;
 
@@ -28,6 +31,11 @@ let can = document.getElementById("can");
 let con = can.getContext("2d");
 can.width = CANVAS_W;
 can.height = CANVAS_H;
+con.mozimageSmoothingEnagbled    = SMOOTHING;
+con.webkitimageSmoothingEnabled = SMOOTHING;
+con.msimageSmoothingEnabled     = SMOOTHING;
+con.imageSmoothingEnabled       = SMOOTHING;
+
 
 //フィールド（仮想画面）
 let vcan = document.createElement("canvas");
@@ -49,6 +57,7 @@ let key = [];
 let teki = [];
 let tama = [];
 let jiki = new Jiki();
+// teki[0] = new Teki(75, 200 << 8, 200 << 8, 0, 0);
 
 //ファイルを読み込み
 let spriteImage = new Image();
@@ -85,13 +94,14 @@ function  updateAll() {
 //描画の処理
 function drawAll() {
     
+  //描画の処理
   vcon.fillStyle = "black";
   vcon.fillRect(camera_x, camera_y, SCREEN_W, SCREEN_H);
 
   drawObj(star);
   drawObj(tama);
-  drawObj(teki);
   jiki.draw();
+  drawObj(teki);
 
   //自機の範囲   0 ~ FIELD_W
   //カメラの範囲 0 ~ (FIELD_W-SCREEN_W)
@@ -125,6 +135,11 @@ function putInfo() {
 
 //ゲームループ
 function gameLoop() {
+
+  //テスト的に的を出す
+  if(1)//(rand(0, 10) == 1)
+    teki.push(new Teki(39, rand(0, FIELD_W) << 8, 0, 0, rand(300, 1200)));
+
   updateAll();
   drawAll();
   putInfo();
