@@ -137,7 +137,7 @@ function putInfo() {
 function gameLoop() {
 
   //テスト的に的を出す
-  if(1)//(rand(0, 10) == 1)
+  if(rand(0, 30) == 1)
     teki.push(new Teki(39, rand(0, FIELD_W) << 8, 0, 0, rand(300, 1200)));
 
   updateAll();
